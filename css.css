@@ -1,0 +1,155 @@
+body{
+    /* Full height */
+    background-image: url(rd-trimmed.gif);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.d3js-canvas{
+    margin: 0;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100vw;
+    height: 100vh;
+    opacity: .98;
+    background: beige;
+}
+/*.button{*/
+/*    padding: 2px;*/
+/*    margin: 0 auto;*/
+/*    width: 50%;*/
+/*    height: 50%;*/
+/*    background-color: bisque;*/
+/*}*/
+/*.circleBase {*/
+/*    width: 50vw;*/
+/*    height: 50vh;*/
+/*    border-radius: 50%;*/
+/*    background: blue;*/
+/*}*/
+
+/*#headerid {*/
+/*    padding: 3%;*/
+/*    text-align: left;*/
+/*    background: transparent url("rd-trimmed.gif") no-repeat;*/
+/*    background-size: 100%;*/
+/*    overflow: hidden;*/
+/*    !*position: fixed; !* Set the navbar to fixed position *!*!*/
+
+/*    width: 20%;*/
+/*    margin: 0;*/
+/*    position: absolute;*/
+/*    left: 36%;*/
+/*    top: 90%;*/
+/*    -ms-transform: translateY(-50%);*/
+/*    transform: translateY(-50%);*/
+/*    height: 0.3vh;*/
+/*    border-style: solid;*/
+/*    border-color: azure;*/
+/*}*/
+/*#headerid:hover {*/
+/*    border-color: red;*/
+/*}*/
+.inWowPrev{
+    position: absolute;
+    top: 85%;
+    align-content: center;
+    border: solid;
+    border-color: brown;
+    width: 40vw;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    text-align: center;
+}
+[contenteditable]{
+    position: absolute;
+    top: 90%;
+    align-content: center;
+    border: solid;
+    border-color: brown;
+    width: 40vw;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    text-align: center;
+}
+.inWowSuggest{
+    position: absolute;
+    top: 95%;
+    align-content: center;
+    border: solid;
+    border-color: brown;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    text-align: center;
+}
+svg{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    size: auto;
+    z-index: -1;
+}
+#infieldid{
+    width: 50%;
+    margin: 0;
+    position: absolute;
+    left: 25%;
+    top: 80%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    height: 30px;
+    text-align: center;
+}
+/*#infieldidtop{*/
+/*    width: 70%;*/
+/*    margin: 0;*/
+/*    position: absolute;*/
+/*    left: 15%;*/
+/*    top: 5%;*/
+/*    -ms-transform: translateY(-50%);*/
+/*    transform: translateY(-50%);*/
+/*    height: 30px;*/
+/*    text-align: center;*/
+/*}*/
+/*#headeridtop {*/
+/*    text-align: left;*/
+/*    background: transparent url(rd-trimmed.gif) no-repeat;*/
+/*    background-size: 63%;*/
+/*    overflow: hidden;*/
+/*    width: 21%;*/
+/*    margin: 0;*/
+/*    position: absolute;*/
+/*    left: 1%;*/
+/*    top: 5%;*/
+/*    -ms-transform: translateY(-50%);*/
+/*    transform: translateY(-50%);*/
+/*    height: 37px;*/
+/*}*/
+
+/*#canvas {*/
+/*    text-align: left;*/
+/*    background: darkgray;*/
+/*    position: absolute;*/
+/*    left: 0%;*/
+/*    top: 50%;*/
+/*    -ms-transform: translateY(-50%);*/
+/*    transform: translateY(-50%);*/
+/*}*/
+
+/*.footer{*/
+/*    width: 95%;*/
+/*    margin: 0;*/
+/*    position: absolute;*/
+/*    bottom: 0%;*/
+/*    -ms-transform: translateY(-50%);*/
+/*    transform: translateY(-50%);*/
+/*    height: 30px;*/
+/*    left: 44%;*/
+/*}*/
