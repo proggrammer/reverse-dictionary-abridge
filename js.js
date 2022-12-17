@@ -8,7 +8,6 @@ angular.module('myApp', [])
         $scope.nextCharSuggestion="";
         $scope.suggestion="";
         $scope.inCache = {};
-        //document.getElementsByClassName("infield")[0].style.background="white";
         $scope.searchInput = undefined;
         $scope.cleanedWordsInputCache = {};
         $scope.hideprogress=true
@@ -32,18 +31,17 @@ angular.module('myApp', [])
             .then(function(response) {
                 $scope.hashedHashes = {};
                 let keysArr = Object.keys(response.data)
-                console.log("hhKEY");
-                console.log(keysArr);
                 keysArr.forEach(k => $scope.hashedHashes[k] = new Set(response.data[k]));
             });
         $scope.changeSearch = function () {
             var inputText = d3.select("[contenteditable]").text();
+            var r = getCaretPositionn();
             updateInputTextHtml(inputText);
+            setCursorPositionAtGiven(r[0]);
             if(inputText == undefined || inputText == "" || inputText.endsWith(String.fromCharCode(160)))  {
                 $scope.nextCharSuggestion="";
                 return;
             }
-            //let inputTokens = inputStr.split(/[^A-Za-z0-9]/).filter(s => s.trim().length!=0);
             let arrrr = inputText.trim().split(/[^A-Za-z0-9]/).filter(s => s.trim()!="");
             if(inputText.endsWith(" "))
                 $scope.suggestion="";
@@ -53,83 +51,116 @@ angular.module('myApp', [])
                     $scope.suggestion="";
                 else
                     $scope.suggestion = stringiFySuggestion($scope.tries[lastTerm.trim()].map(s => s.replace(lastTerm, "")), lastTerm);
-
             }
         }
+        function setCaret( nodePos, offset) {
+            var el = document.getElementById("inWow");
+            var range = document.createRange();
+            var sel = window.getSelection();
+            if(el.childNodes[nodePos].childNodes.length == 0) {
+                if(el.childNodes[nodePos].length<offset)
+                    offset = el.childNodes[nodePos].length
+                range.setStart(el.childNodes[nodePos], offset);
+            }
+            else {
+                if(el.childNodes[nodePos].childNodes[0].length<offset)
+                    offset = el.childNodes[nodePos].length
+                range.setStart(el.childNodes[nodePos].childNodes[0], offset);
+            }
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        function setCursorPositionAtGiven(caretPos) {
+            var fullText = document.getElementById("inWow").textContent;
+            var tillNowText = fullText.substring(0,caretPos);
+            var totalString = "";
+            var nnode = -1;
+            var nnodeOS = -1
+            for(var i=0; i<document.getElementById("inWow").childNodes.length; i++)   {
+                var txt = document.getElementById("inWow").childNodes[i].textContent;
+                totalString = totalString+txt;
+                if(tillNowText.length<=totalString.length) {
+                    nnode = i;
+                    nnodeOS = caretPos-totalString.length+txt.length;
+                    break;
+                }
+            }
+            setCaret(nnode, nnodeOS);
+        }
         function updateInputTextHtml(inputStr)  {
-            let text = inputStr;
-            console.log("updateInputTextHtml:"+inputStr+":");
-            let endSpace = text.endsWith(String.fromCharCode(160))? text.substring(text.length-1, text.length) : "";
-            // if(text.endsWith(" ") || text.endsWith(" "))
-            $scope.debug = text;
-            console.log("ended with space"+text+":");
+            let text = inputStr.toLowerCase();
+            let endSpace = text.endsWith(String.fromCharCode(160)) || text.endsWith(" ") ? text.substring(text.length-1, text.length) : "";
             let arrrr = text.split(/[^A-Za-z0-9]/).filter(s => s.trim()!="");
 
-            console.log(":"+text +"d3.select(\"[contenteditable]\").text()"+endSpace+"::");
-            console.log("bigInput");
-            console.log(arrrr);
-            console.log("here");
-            console.log(arrrr);
-            //notMatchedFullButThere->orange, notMatched orange+red, matched green
             var htmlContent = "";
+            const strs = [];
             arrrr.forEach(a => {
-                console.log("gg:"+a);
                 var r = "";
                 if($scope.tries[a] != undefined)    {
-                    r = "<span style=\"color: green\">"+a+endSpace+"</span>";
+                    let s = "<span style=\"color: green\">"+a+"</span>";
+                    strs.push(s);
                 }
                 else{
-                    console.log("ghussaELSE");
                     var notMatchIndex=0;
                     for(notMatchIndex=1; notMatchIndex<a.length;notMatchIndex++)    {
-                        console.log("ghussa");
                         var subStr = a.substring(0, notMatchIndex);
                         if($scope.tries[subStr] == undefined)
                             break
                     }
                     notMatchIndex-=1;
-                    r = "<span style=\"color: orange\">"+a.substring(0,notMatchIndex)+"</span>"+
-                        "<span style=\"color: red\">"+a.substring(notMatchIndex,a.length)+endSpace+"</span>";
+                    let s = "<span style=\"color: orange\">"+a.substring(0,notMatchIndex)+"</span>"+
+                        "<span style=\"color: red\">"+a.substring(notMatchIndex,a.length)+"</span>"
+                    strs.push(s);
                 }
-                htmlContent+=" "+r;
             });
-            console.log(htmlContent);
-            d3.select(".inWowPrev").html(htmlContent);
+            htmlContent = strs.join(" ")+(endSpace==""? "" : String.fromCharCode(160)   );
             d3.select(".inWow").html(htmlContent);
-            setEndOfContenteditable(document.getElementById('inWow'));//important to keep cursor at the end
-            //d3.select("[contenteditable]").focus()
-            // //placeCaretAtEnd(d3.select("[contenteditable]"));
-            // console.log("pp"+d3.select("[contenteditable]").text().length);
-            // setCurrentCursorPosition(d3.select("[contenteditable]").text().length);
         }
-        function setEndOfContenteditable(contentEditableElement)
-        {
-            var range,selection;
 
-                range = document.createRange();//Create a range (a range is a like the selection but invisible)
-                range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
-                range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
-                selection = window.getSelection();//get the selection object (allows you to change selection)
-                selection.removeAllRanges();//remove any selections already made
-                selection.addRange(range);//make the range you have just created the visible selection
+        function node_walk(node, func) {
+            var result = func(node);
+            for(node = node.firstChild; result !== false && node; node = node.nextSibling)
+                result = node_walk(node, func);
+            return result;
+        };
+        function getCaretPositionn() {
+            var elem  = document.getElementById("inWow");
+            var sel = window.getSelection();
+            var cum_length = [0, 0];
 
-        }
-        function placeCaretAtEnd(el) {
-            el.focus();
-            if (typeof window.getSelection != "undefined"
-                && typeof document.createRange != "undefined") {
-                var range = document.createRange();
-                range.selectNodeContents(el);
-                range.collapse(false);
-                var sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else if (typeof document.body.createTextRange != "undefined") {
-                var textRange = document.body.createTextRange();
-                textRange.moveToElementText(el);
-                textRange.collapse(false);
-                textRange.select();
+            if(sel.anchorNode == elem)
+                cum_length = [sel.anchorOffset, sel.extentOffset];
+            else {
+                var nodes_to_find = [sel.anchorNode, sel.extentNode];
+                if(!elem.contains(sel.anchorNode) || !elem.contains(sel.extentNode))
+                    return undefined;
+                else {
+                    var found = [0,0];
+                    var i;
+                    node_walk(elem, function(node) {
+                        for(i = 0; i < 2; i++) {
+                            if(node == nodes_to_find[i]) {
+                                found[i] = true;
+                                if(found[i == 0 ? 1 : 0])
+                                    return false; // all done
+                            }
+                        }
+
+                        if(node.textContent && !node.firstChild) {
+                            for(i = 0; i < 2; i++) {
+                                if(!found[i])
+                                    cum_length[i] += node.textContent.length;
+                            }
+                        }
+                    });
+                    cum_length[0] += sel.anchorOffset;
+                    cum_length[1] += sel.extentOffset;
+                }
             }
+            if(cum_length[0] <= cum_length[1])
+                return cum_length;
+            return [cum_length[1], cum_length[0]];
         }
         function createRange(node, chars, range) {
             if (!range) {
@@ -162,44 +193,12 @@ angular.module('myApp', [])
             return range;
         };
 
-        function setCurrentCursorPosition(chars) {
-            if (chars >= 0) {
-                var selection = window.getSelection();
-
-                range = createRange(document.getElementById("inWow").parentNode, { count: chars });
-
-                if (range) {
-                    range.collapse(false);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                }
-            }
-        };
-        function placeCaretAtEnd(el) {
-            el.focus();
-            if (typeof window.getSelection != "undefined"
-                && typeof document.createRange != "undefined") {
-                var range = document.createRange();
-                range.selectNodeContents(el);
-                range.collapse(false);
-                var sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else if (typeof document.body.createTextRange != "undefined") {
-                var textRange = document.body.createTextRange();
-                textRange.moveToElementText(el);
-                textRange.collapse(false);
-                textRange.select();
-            }
-        }
         $scope.onFocus = function ()    {
-            console.log("f called");
             $scope.searchInput = d3.select("[contenteditable]").html();
             if($scope.searchInput.includes("Search for words in Dictionary by their def"))
                 d3.select("[contenteditable]").html("");
         }
         $scope.onFocusout = function ()    {
-            console.log("fout called");
             $scope.searchInput = d3.select("[contenteditable]").html();
             if($scope.searchInput == undefined || $scope.searchInput.trim() == "")
                 d3.select("[contenteditable]").html("Search for words in Dictionary by their def<span style=\"color: red\">initions..</span> example : 'someone who donates' or 'female dog'");
@@ -213,39 +212,27 @@ angular.module('myApp', [])
             result="";
             var suggestCharArr = list.filter(s => !(s.startsWith("<") && s.endsWith(">"))).sort();
             if(suggestCharArr.length>0)
-                result += "Next Char Suggestion:" + suggestCharArr.join(",");
-            $scope.nextCharSuggestion = result;
+                result += "<span style=\"color: rosybrown\">Next Char Suggestion: </span>" + suggestCharArr.join(" ");
+            //$scope.nextCharSuggestion = result;
+            d3.select(".inWowSuggest").html(result);
             return result;
         }
         function approxWordProcess(word)   {
-            console.log("hhKey:"+word.substring(0,1));
             let allKeys = $scope.hashedHashes[word.substring(0,1)];
-            console.log(allKeys);
             if(allKeys.has(word))
                 return word;
             else
             {
-                console.log("allKeys");
-                console.log(allKeys);
-                console.log(word+"else part"+allKeys.has(word));
-                console.log(allKeys.length+"else part"+allKeys.has("occupation"));
                 let minEdit = 100;
                 let approxWord = "";
                 allKeys = Array.from(allKeys);
                 for(let i=0; i<allKeys.length; i++)  {
-                    console.log(i+"/"+allKeys.length);
-                    // // console.log(allKeys[i]);
-                    // if(allKeys[i].trim() == "occupation");
-                    //     console.log("entered occupation" + allKeys[i].trim() );
                     let ed = fasterEditDist(allKeys[i], word, allKeys[i].length, word.length)
-                    // if(allKeys[i].trim() == "occupation");
-                    // console.log("entered occupation"+ed);
 
                     if(minEdit > ed) {
                         minEdit = ed;
                         approxWord = allKeys[i];
                     }
-                    console.log(minEdit, ed);
                     if(minEdit==1)
                         break;
                 }
