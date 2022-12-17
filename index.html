@@ -2,12 +2,14 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src = "https://d3js.org/d3.v4.min.js"></script>
 <script src="js.js"></script>
+<script src="d3js.js"></script>
 <head>
     <title>Reverse Dictionary Abridge</title>
     <link rel="stylesheet" href="css.css">
 </head>
 <body ng-app="myApp" ng-controller="MyController">
 <div class="d3js-canvas">
+    <div id="svgcontainer"></div>
 <!--    <div  ng-model="seach" id="inWowPrev" class="inWowPrev">-->
 <!--    </div>-->
     <div contenteditable ng-model="seach" id="inWow" class="inWow" ng-change="changeSearch()" contenteditable="true" ng-model-options="{ debounce: 1500 }" ng-focus="onFocus()" ng-blur="onFocusout()">

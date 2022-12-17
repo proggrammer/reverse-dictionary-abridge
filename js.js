@@ -35,23 +35,27 @@ angular.module('myApp', [])
             });
         $scope.changeSearch = function () {
             var inputText = d3.select("[contenteditable]").text();
-            var r = getCaretPositionn();
-            updateInputTextHtml(inputText);
-            setCursorPositionAtGiven(r[0]);
-            if(inputText == undefined || inputText == "" || inputText.endsWith(String.fromCharCode(160)))  {
-                $scope.nextCharSuggestion="";
+            if(inputText == undefined || inputText == "" || inputText.endsWith(String.fromCharCode(160)) || inputText.includes("Search for words in Dictionary by their def"))  {
+                d3.select(".inWowSuggest").html("");
+                console.log("huha");
                 return;
             }
+            var r = getCaretPositionn();
+
+            updateInputTextHtml(inputText);
+            setCursorPositionAtGiven(r[0]);
+
             let arrrr = inputText.trim().split(/[^A-Za-z0-9]/).filter(s => s.trim()!="");
             if(inputText.endsWith(" "))
                 $scope.suggestion="";
             else {
                 var lastTerm = arrrr[arrrr.length-1];
                 if($scope.tries[lastTerm.trim()] == undefined)
-                    $scope.suggestion="";
+                    d3.select(".inWowSuggest").html("");
                 else
                     $scope.suggestion = stringiFySuggestion($scope.tries[lastTerm.trim()].map(s => s.replace(lastTerm, "")), lastTerm);
             }
+            drawOPItems($scope.dictFile, $scope.hashesFile);
         }
         function setCaret( nodePos, offset) {
             var el = document.getElementById("inWow");
@@ -200,7 +204,7 @@ angular.module('myApp', [])
         }
         $scope.onFocusout = function ()    {
             $scope.searchInput = d3.select("[contenteditable]").html();
-            if($scope.searchInput == undefined || $scope.searchInput.trim() == "")
+            if($scope.searchInput == undefined || $scope.searchInput.trim() == "" || $scope.searchInput.replace("<br>","").trim()=="")
                 d3.select("[contenteditable]").html("Search for words in Dictionary by their def<span style=\"color: red\">initions..</span> example : 'someone who donates' or 'female dog'");
         }
         function stringiFySuggestion(list, lastTerm)  {

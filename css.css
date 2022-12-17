@@ -12,45 +12,18 @@ body{
     top: 0%;
     width: 100vw;
     height: 100vh;
-    opacity: .98;
+    opacity: .97;
     background: beige;
 }
-/*.button{*/
-/*    padding: 2px;*/
-/*    margin: 0 auto;*/
-/*    width: 50%;*/
-/*    height: 50%;*/
-/*    background-color: bisque;*/
-/*}*/
-/*.circleBase {*/
-/*    width: 50vw;*/
-/*    height: 50vh;*/
-/*    border-radius: 50%;*/
-/*    background: blue;*/
-/*}*/
-
-/*#headerid {*/
-/*    padding: 3%;*/
-/*    text-align: left;*/
-/*    background: transparent url("rd-trimmed.gif") no-repeat;*/
-/*    background-size: 100%;*/
-/*    overflow: hidden;*/
-/*    !*position: fixed; !* Set the navbar to fixed position *!*!*/
-
-/*    width: 20%;*/
-/*    margin: 0;*/
-/*    position: absolute;*/
-/*    left: 36%;*/
-/*    top: 90%;*/
-/*    -ms-transform: translateY(-50%);*/
-/*    transform: translateY(-50%);*/
-/*    height: 0.3vh;*/
-/*    border-style: solid;*/
-/*    border-color: azure;*/
-/*}*/
-/*#headerid:hover {*/
-/*    border-color: red;*/
-/*}*/
+svg {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    right: 0%;
+    bottom: 0%;
+    z-index: -1;
+    background: beige;
+}
 .inWowPrev{
     position: absolute;
     top: 85%;
@@ -76,6 +49,15 @@ body{
     margin-left:auto;
     margin-right:auto;
     text-align: center;
+}
+#svgcontainer{
+    background: #a1a16e;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    right: 0%;
+    bottom: 0%;
+    z-index: -100;
 }
 .inWowSuggest{
     position: absolute;
