@@ -1,7 +1,7 @@
 
 angular.module('myApp', [])
     .controller('MyController', function($scope, $http) {
-        var svg = d3.select(".d3js-canvas").append("svg").attr("width", "100%").attr("height", "100%");
+        //var svg = d3.select(".d3js-canvas").append("svg").attr("width", "100%").attr("height", "100%");
         $scope.headerid="headerid";
         $scope.inputid="infieldid";
         $scope.exactMatchSuggestion = "";
@@ -43,8 +43,10 @@ angular.module('myApp', [])
             var r = getCaretPositionn();
 
             updateInputTextHtml(inputText);
+            if(r == undefined)
+                return;
             setCursorPositionAtGiven(r[0]);
-
+            inputText = inputText.substring(0, r[0]);
             let arrrr = inputText.trim().split(/[^A-Za-z0-9]/).filter(s => s.trim()!="");
             if(inputText.endsWith(" "))
                 $scope.suggestion="";

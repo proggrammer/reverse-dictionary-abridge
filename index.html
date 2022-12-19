@@ -9,7 +9,9 @@
 </head>
 <body ng-app="myApp" ng-controller="MyController">
 <div class="d3js-canvas">
-    <div id="svgcontainer"></div>
+    <svg id="svgcontainer" height="100%" width="100%">
+<!--        <svg id="paper"></svg>-->
+    </svg>
 <!--    <div  ng-model="seach" id="inWowPrev" class="inWowPrev">-->
 <!--    </div>-->
     <div contenteditable ng-model="seach" id="inWow" class="inWow" ng-change="changeSearch()" contenteditable="true" ng-model-options="{ debounce: 1500 }" ng-focus="onFocus()" ng-blur="onFocusout()">

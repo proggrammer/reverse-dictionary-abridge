@@ -15,7 +15,7 @@ body{
     opacity: .97;
     background: beige;
 }
-svg {
+#paper {
     position: absolute;
     top: 0%;
     left: 0%;
@@ -51,7 +51,7 @@ svg {
     text-align: center;
 }
 #svgcontainer{
-    background: #a1a16e;
+    background: beige;
     position: absolute;
     top: 0%;
     left: 0%;
