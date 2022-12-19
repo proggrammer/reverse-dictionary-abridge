@@ -33,11 +33,34 @@ angular.module('myApp', [])
                 let keysArr = Object.keys(response.data)
                 keysArr.forEach(k => $scope.hashedHashes[k] = new Set(response.data[k]));
             });
+        $scope.moveCursor = function (){
+            if(d3.select("[contenteditable]").text().includes("Search for words in Dictionary by their def") || d3.select("[contenteditable]").text().trim().length == 0) {
+                return;
+            }
+            var r = getCaretPositionn();
+
+            if(r == undefined || r[0] == 0) {
+                d3.select(".inWowSuggest").html("");
+                return;
+            }
+            var inputText = d3.select("[contenteditable]").text();
+            setCursorPositionAtGiven(r[0]);
+            inputText = inputText.substring(0, r[0]);
+            let arrrr = inputText.trim().split(/[^A-Za-z0-9]/).filter(s => s.trim()!="");
+            if(inputText.endsWith(" "))
+                $scope.suggestion="";
+            else {
+                var lastTerm = arrrr[arrrr.length-1];
+                if($scope.tries[lastTerm.trim()] == undefined)
+                    d3.select(".inWowSuggest").html("");
+                else
+                    $scope.suggestion = stringiFySuggestion($scope.tries[lastTerm.trim()].map(s => s.replace(lastTerm, "")), lastTerm);
+            }
+        }
         $scope.changeSearch = function () {
             var inputText = d3.select("[contenteditable]").text();
             if(inputText == undefined || inputText == "" || inputText.endsWith(String.fromCharCode(160)) || inputText.includes("Search for words in Dictionary by their def"))  {
                 d3.select(".inWowSuggest").html("");
-                console.log("huha");
                 return;
             }
             var r = getCaretPositionn();
@@ -52,7 +75,7 @@ angular.module('myApp', [])
                 $scope.suggestion="";
             else {
                 var lastTerm = arrrr[arrrr.length-1];
-                if($scope.tries[lastTerm.trim()] == undefined)
+                if(arrrr.length == 0 || $scope.tries[lastTerm.trim()] == undefined)
                     d3.select(".inWowSuggest").html("");
                 else
                     $scope.suggestion = stringiFySuggestion($scope.tries[lastTerm.trim()].map(s => s.replace(lastTerm, "")), lastTerm);
