@@ -42,7 +42,8 @@ function drawOPItems(dict, hashes)  {
     window.allOPWordSet = Object.keys(window.allOPWords);
     var totalScore = 0;
     Object.keys(window.bi).forEach(key => {
-        totalScore+=window.bi[key]["presentIn"].length;
+        if(window.bi[key] !=undefined && window.bi[key]["presentIn"] != undefined)
+            totalScore+=window.bi[key]["presentIn"].length;
     });
 
     window.wordsInSortedForm={};
@@ -65,18 +66,26 @@ function drwCld2(data)  {
     if( dataSize === 0)
     {
         window.maxScore = 40;
+        var arrayOfExample = ["mental science", "male cow", "cut hair occupation", "mosquito diseases", "fewer words retaining sense"];
+        var randomNumber = Math.round(arrayOfExample.length*Math.random());
         data = [{"text": "Reverse Dictionary", size: 40},
-            {"text": "Use fewer words without loosing sense!", size:20},
+            {"text": "Use fewer words without loosing sense!", size:16},
             {"text": "Learn new words using this tool!", size:12},
             {"text": "Find Connection between words!", size:12},
-            {"text": "Type any word(s) in the textbox, example: 'male cow'!", size:30},
-            {"text": "Type 'mental science'!", size:12},
-            {"text": "Type 'fewer words retaining sense'!", size:12},
+            {"text": "Type any word(s) in the textbox, example: '"+arrayOfExample[randomNumber]+"'!", size:30},
             {"text": "Type any words in the textbox!", size:15},
             {"text": "Abridge!", size:12},
+            {"text": "Shorten your ideas!", size:12},
+            {"text": "Be precise!", size:12},
+            {"text": "Enrich your Vocabulary!", size:12},
             {"text": "Use next character suggestion for spelling correction!", size:15},
             {"text": "Search dictionary words with their definitions!", size:35}
         ];
+        arrayOfExample.forEach(s =>{
+            if(s != arrayOfExample[randomNumber])   {
+                data.push({"text":"Type '"+s+"'!", "size":12});
+            }
+        })
     }
     var maxScore = Math.floor(window.maxScore);
     var w = parseInt(d3.select(".d3js-canvas").style("width"), 10);
