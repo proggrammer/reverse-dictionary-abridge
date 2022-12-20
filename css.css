@@ -5,6 +5,9 @@ body{
     background-position: center;
     background-repeat: no-repeat;
 }
+#cloud{
+    background: brown;
+}
 .d3js-canvas{
     margin: 0;
     position: absolute;

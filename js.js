@@ -65,8 +65,10 @@ angular.module('myApp', [])
                 return;
             }
             var r = getCaretPositionn();
+
             updateInputTextHtml(inputText);
             if(r == undefined) {
+                drawOPItems($scope.dictFile, $scope.hashesFile);
                 return;
             }
             setCursorPositionAtGiven(r[0]);

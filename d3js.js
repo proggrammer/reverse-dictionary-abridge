@@ -1,25 +1,12 @@
 function drawOPItems(dict, hashes)  {
-    // var svg = d3.select("svg");
-    //
-    // svg.append("line")
-    //     .attr("x1", 100)
-    //     .attr("y1", 100)
-    //     .attr("x2", 200)
-    //     .attr("y2", 200)
-    //     .style("stroke", "rgb(255,0,0)")
-    //     .style("stroke-width", 2);
     var inputText = d3.select("[contenteditable]").text();
     var inputTextAsArray = inputText.split(/\s+/);
     if(window.bi == undefined)
         window.bi = {};
     if(window.allOPWords == undefined)
         window.allOPWords = {};
-    console.log(inputTextAsArray);
     var itemsToBeAdded = inputTextAsArray.filter(s => window.bi[s] === undefined);
     var itemsToBeRemoved = Object.keys(window.bi).filter(s => !inputTextAsArray.includes(s));
-
-    console.log("add"+itemsToBeAdded);
-    console.log("del"+itemsToBeRemoved);
     window.wordsToBeAdded = [];
     window.wordsToBeRemoved = [];
 
@@ -50,25 +37,81 @@ function drawOPItems(dict, hashes)  {
         });
         delete window.bi[e];
     });
-
     window.allOPWordSet = Object.keys(window.allOPWords);
-
-
     var totalScore = 0;
-    Object.keys(window.allOPWords).forEach(key => {
-        totalScore+=window.allOPWords[key].length
+    Object.keys(window.bi).forEach(key => {
+        totalScore+=window.bi[key]["presentIn"].length;
     });
 
-    window.allOPWordSet.sort(function (a, b) {
-        var scoreA = getScoreOfWord(a, window.allOPWords[a], window.bi, totalScore);
-        var scoreB = getScoreOfWord(a, window.allOPWords[b], window.bi, totalScore);
-        return -scoreB+scoreA || (a<b? 1:-1);
+    window.wordsInSortedForm={};
+    var scores = [];
+    var dataFinal = [];
+    var maxScore=0;
+    window.allOPWordSet.forEach( w => {
+        var score = getScoreOfWord(w, window.allOPWords[w], window.bi, totalScore);
+        maxScore = Math.max(maxScore, score);
+        dataFinal.push({"text": w, "size":score, "present": window.allOPWords[w]})
     });
-    // console.log(dict, hashes);
+    window.maxScore = maxScore
+    drwCld2(dataFinal);
+}
+function drwCld2(data)  {
+    window.data = data;
+    console.log(data);
+    var maxScore = Math.floor(window.maxScore);
+    var w = parseInt(d3.select(".d3js-canvas").style("width"), 10);
+    var h = parseInt(d3.select(".d3js-canvas").style("height"), 10);
+    var layout = d3.layout.cloud()
+        .size([w, h*.9])
+        .words(data)
+        .padding(0)
+        //.rotate(function(d) { return (d.size >= 40 ? 0 : (Math.random()) * 90); })
+        .rotate(function(d) { return 0; })
+        .font("Impact")
+        .fontSize(function(d) { return d.size; })
+        .on("end", draw);
+
+    layout.start();
+
+    function draw(words) {
+        var maxScore = Math.floor(window.maxScore);
+        d3.select(".d3js-canvas").append("svg")
+            .attr("width", layout.size()[0])
+            .attr("height", layout.size()[1])
+            .append("g")
+            .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+            .selectAll("text")
+            .data(words)
+            .enter().append("text")
+            .style("font-size", function(d) { return d.size + "px"; })
+            .style("fill", function(d) { return d.size == maxScore ? "rgb(0,0,255)" :"rgb("+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+")"; })
+            //.style("fill", "rgb(0,0,255)")
+            .style("font-family", "Impact")
+            .attr("text-anchor", "middle")
+            .attr("transform", function(d) {
+                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+            })
+            .text(function(d) { return d.text; });
+    }
+}
+function beautifyAsArrayOfArray(arrayOfTexts, maxElementsInColumn, maxCharPerRow)   {
+    var result =[];
+    var rowOfText = "";
+    arrayOfTexts.forEach(text => {
+        if(text.length+rowOfText.length<maxCharPerRow)   {
+            rowOfText = rowOfText+(rowOfText==""? "" :" ")+text;
+        }
+        else{
+            result.push(rowOfText);
+            rowOfText="";
+        }
+    })
 }
 function getScoreOfWord(word, listOfInputWordWhereItExists, allInputDetails, ts)    {
-    listOfInputWordWhereItExists.forEach(s => ts-=allInputDetails[s]["presentIn"].length);
-    return ts;
+    var fullMarks=ts;
+    listOfInputWordWhereItExists.forEach(s => ts= ts-allInputDetails[s]["presentIn"].length);
+    //console.log(fullMarks, ts, "wow");
+    return ts==0 && Object.keys(allInputDetails).length>1? (fullMarks-ts)*40.1/fullMarks : (fullMarks-ts)*20.1/fullMarks;
 }
 
 /// porter stem
