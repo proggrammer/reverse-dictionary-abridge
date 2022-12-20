@@ -11,20 +11,22 @@ function drawOPItems(dict, hashes)  {
     window.wordsToBeRemoved = [];
 
     itemsToBeAdded.forEach( (e, i) => {
-        var stem = stemIt(e);
-        var presentIn = hashes[stem] == undefined ? undefined : hashes[stem].map(s => dict[s]);
-        if(presentIn != undefined)  {
-            presentIn.forEach((ei) => {
-                if(window.allOPWords[ei["w"]] == undefined) {
-                    window.allOPWords[ei["w"]] = [];
-                    window.wordsToBeAdded.push(ei["w"]);
-                }
-                if(!window.allOPWords[ei["w"]].includes(e))
-                    window.allOPWords[ei["w"]].push(e);
-            })
+        if(e.trim() != "") {
+            var stem = stemIt(e);
+            var presentIn = hashes[stem] == undefined ? undefined : hashes[stem].map(s => dict[s]);
+            if (presentIn != undefined) {
+                presentIn.forEach((ei) => {
+                    if (window.allOPWords[ei["w"]] == undefined) {
+                        window.allOPWords[ei["w"]] = [];
+                        window.wordsToBeAdded.push(ei["w"]);
+                    }
+                    if (!window.allOPWords[ei["w"]].includes(e))
+                        window.allOPWords[ei["w"]].push(e);
+                })
+            }
+            var index = i;
+            window.bi[e] = {"stem": stem, "presentIn": presentIn, "index": index};
         }
-        var index = i;
-        window.bi[e] = {"stem":stem, "presentIn":presentIn, "index":index};
     });
     itemsToBeRemoved.forEach( (e, i) => {
         var allKeys = Object.keys(window.allOPWords);
@@ -57,7 +59,21 @@ function drawOPItems(dict, hashes)  {
 }
 function drwCld2(data)  {
     window.data = data;
+    console.log("fffff"+data.length);
     console.log(data);
+    var dataSize = data.length;
+    if( dataSize === 0)
+    {
+        window.maxScore = 40;
+        data = [{"text": "Reverse Dictionary", size: 40},
+            {"text": "Use fewer words without loosing sense!", size:30},
+            {"text": "Learn new words using this tool!", size:15},
+            {"text": "Find Connection between words!", size:15},
+            {"text": "Abridge!", size:25},
+
+            {"text": "Search dictionary words with their definitions!", size:35},
+        ];
+    }
     var maxScore = Math.floor(window.maxScore);
     var w = parseInt(d3.select(".d3js-canvas").style("width"), 10);
     var h = parseInt(d3.select(".d3js-canvas").style("height"), 10);
@@ -70,28 +86,32 @@ function drwCld2(data)  {
         .font("Impact")
         .fontSize(function(d) { return d.size; })
         .on("end", draw);
-
     layout.start();
 
     function draw(words) {
         var maxScore = Math.floor(window.maxScore);
-        d3.select(".d3js-canvas").append("svg")
-            .attr("width", layout.size()[0])
-            .attr("height", layout.size()[1])
-            .append("g")
-            .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
-            .selectAll("text")
-            .data(words)
-            .enter().append("text")
-            .style("font-size", function(d) { return d.size + "px"; })
-            .style("fill", function(d) { return d.size == maxScore ? "rgb(0,0,255)" :"rgb("+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+")"; })
-            //.style("fill", "rgb(0,0,255)")
-            .style("font-family", "Impact")
-            .attr("text-anchor", "middle")
-            .attr("transform", function(d) {
-                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-            })
-            .text(function(d) { return d.text; });
+            d3.select(".d3js-canvas").select("svg")
+                .attr("width", layout.size()[0])
+                .attr("height", layout.size()[1])
+                .select("g")
+                .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+                .selectAll("text")
+                .data(words)
+                //.join()
+                .join("text")
+                .transition()
+                .duration(1500)
+                .ease(d3.easeLinear)
+                .style("font-size", function(d) { return d.size + "px"; })
+                .style("fill", function(d) { return d.size == maxScore ? "rgb(0,0,255)" :"rgb("+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+")"; })
+                //.style("fill", "rgb(0,0,255)")
+                .style("font-family", "Impact")
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });
+        window.huha = true;
     }
 }
 function beautifyAsArrayOfArray(arrayOfTexts, maxElementsInColumn, maxCharPerRow)   {
@@ -110,7 +130,6 @@ function beautifyAsArrayOfArray(arrayOfTexts, maxElementsInColumn, maxCharPerRow
 function getScoreOfWord(word, listOfInputWordWhereItExists, allInputDetails, ts)    {
     var fullMarks=ts;
     listOfInputWordWhereItExists.forEach(s => ts= ts-allInputDetails[s]["presentIn"].length);
-    //console.log(fullMarks, ts, "wow");
     return ts==0 && Object.keys(allInputDetails).length>1? (fullMarks-ts)*40.1/fullMarks : (fullMarks-ts)*20.1/fullMarks;
 }
 

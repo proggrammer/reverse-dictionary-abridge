@@ -14,6 +14,7 @@ angular.module('myApp', [])
         $scope.cache={};
         $scope.lastUpdated= Date.now();
         $scope.hideprogress=true;
+        drwCld2([]);
         $http.get("corpus/tries.json")
             .then(function(response) {
                 $scope.tries = response.data;
@@ -237,7 +238,7 @@ angular.module('myApp', [])
         $scope.onFocusout = function ()    {
             $scope.searchInput = d3.select("[contenteditable]").html();
             if($scope.searchInput == undefined || $scope.searchInput.trim() == "" || $scope.searchInput.replace("<br>","").trim()=="")
-                d3.select("[contenteditable]").html("Search for words in Dictionary by their def<span style=\"color: red\">initions..</span> example : 'someone who donates' or 'female dog'");
+                d3.select("[contenteditable]").html("Search for words in Dictionary by their def<span style=\"color: red\">initions..</span> example : 'hair cut occupation' or 'male cow'");
         }
         function stringiFySuggestion(list, lastTerm)  {
             if(list == undefined || list.length == 0)
