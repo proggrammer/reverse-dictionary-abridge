@@ -66,12 +66,16 @@ function drwCld2(data)  {
     {
         window.maxScore = 40;
         data = [{"text": "Reverse Dictionary", size: 40},
-            {"text": "Use fewer words without loosing sense!", size:30},
-            {"text": "Learn new words using this tool!", size:15},
-            {"text": "Find Connection between words!", size:15},
-            {"text": "Abridge!", size:25},
-
-            {"text": "Search dictionary words with their definitions!", size:35},
+            {"text": "Use fewer words without loosing sense!", size:20},
+            {"text": "Learn new words using this tool!", size:12},
+            {"text": "Find Connection between words!", size:12},
+            {"text": "Type any word(s) in the textbox, example: 'male cow'!", size:30},
+            {"text": "Type 'mental science'!", size:12},
+            {"text": "Type 'fewer words retaining sense'!", size:12},
+            {"text": "Type any words in the textbox!", size:15},
+            {"text": "Abridge!", size:12},
+            {"text": "Use next character suggestion for spelling correction!", size:15},
+            {"text": "Search dictionary words with their definitions!", size:35}
         ];
     }
     var maxScore = Math.floor(window.maxScore);
