@@ -143,8 +143,8 @@ function capitaliseAndRemoveUnderScore(string)   {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 function overed(event, d) {
+
     const bbox = this.getBBox();
-    console.log(d.text);
 
     if(d.text == "About the Author!") {
         var aa = d3.select("g")
@@ -161,7 +161,9 @@ function overed(event, d) {
             .style("fill", "red");
     if(window.dictMap == undefined) return;
     var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
+    var svgHeight = d3.select("svg").style("height").replace("px", "");
     var gLeft = d3.select("g").style("transform").split(",")[4];
+    var gTop = d3.select("g").style("transform").split(",")[5].replace(")","");
     var margin = svgWidth*.1;
     var textItem = d.text+"\u00A0[Input Connection ("+window.allOPWords[d.text]+")]\u00A0" + window.dictMap[d.text];
     textItem = textItem.replaceAll(", ", ",").replaceAll(",", ", ");
@@ -171,7 +173,72 @@ function overed(event, d) {
     var minSVG = margin-gLeft;//-
     var maxSVG = minSVG+svgWidth;//+
 
+    // //draw links
+    // var bbb = document.getElementById("inWow").getBoundingClientRect();
+    var gBB = d3.select("svg");
+    //console.log(gBB);
+    var yHighlightInput = 100;
+    // d3.select("g").append('line')
+    //     .style("stroke", "red")
+    //     .style("stroke-width", 8)
+    //     .attr("x1", 0)
+    //     .attr("y1", d3.select("svg").attr("height")-gTop-4)
+    //     .attr("x2", 10)
+    //     .attr("y2", d3.select("svg").attr("height")-gTop-4);
+    //var connections = window.allOPWords[d.text];
+    var inputWords = Object.keys(window.bi);
+    var arrSizesOfFontOfWords = [];
+    var textItemNode = d3.select("g").append("text")
+        .attr("id", "testItem")
+        .text("\u00A0");
+    var spaceWidth = textItemNode.node().getBBox().width;
+    textItemNode.remove();
+    inputWords.forEach(w => {
+            textItemNode = d3.select("g").append("text")
+                .attr("id", "testItem")
+                .text(w);
+            arrSizesOfFontOfWords.splice(window.bi[w]["index"], 0, textItemNode.node().getBBox().width);
+        textItemNode.remove();
+        })
+    console.log(arrSizesOfFontOfWords);
+    window.delimeters =[];
+    var tillSizeNow = 0;
+    var totalSize = (arrSizesOfFontOfWords.length-1)*spaceWidth+d3.sum(arrSizesOfFontOfWords);
+    console.log(totalSize);
+    arrSizesOfFontOfWords.forEach(v => {
+            const valueNow = (tillSizeNow + v / 2) - totalSize/2;
+            console.log("valueNow"+valueNow);
+            window.delimeters.push(valueNow);
+            tillSizeNow = tillSizeNow + (tillSizeNow == 0 ? 0 : 1) + v + 1;
+            console.log("achcha:"+tillSizeNow);
+            console.log(window.delimeters);
+        });
 
+    d3.select("g").append("text")
+        .attr("id", "testItem")
+    d3.select("g").append('circle')
+        .style("stroke", "red")
+        .style("stroke-width", 8)
+        .attr("r", 2)
+        .attr("cx", 0)
+        .attr("cy", d3.select("svg").attr("height")-gTop-3);
+    // const line = d3.lineRadial()
+    //     .curve(d3.curveBundle.beta(0.85))
+    //     .radius(d => d.y)
+    //     .angle(d => d.x);
+    //
+    // d3.select("g")
+    //     .selectAll("path")
+    //     .data([[{x:0, y:20}, {x:50, y:30}]])
+    //     .join("path")
+    //     .style("fill", "red")
+    //     .attr("stroke", "red")
+    //     .style("mix-blend-mode", "multiply")
+    //     .attr("d", ([i, o]) => line(i.path(o)))
+    //     .each(function(d) { d.path = this; });
+
+
+    //link.style("mix-blend-mode", null);
     var maxWidthEachText = 0;
     var a = d3.select("g")
             .append("rect");
@@ -193,17 +260,13 @@ function overed(event, d) {
     var leftSide = d.x - minSVG;
     var rightSide = maxSVG - d.x;
     var minSide = Math.min(leftSide, rightSide);
-    console.log(minSide, maxWidthEachText, leftSide, rightSide);//-
     if(minSide>=maxWidthEachText/2) {
-        console.log("center ALLi");
         finalX = d.x - (maxWidthEachText / 2);
     }
     else if(leftSide < rightSide) {
-        console.log("left ALLi");
         finalX = minSVG;
     }
     else {
-        console.log("right ALLi");
         finalX = maxSVG - maxWidthEachText;
     }
 
@@ -253,6 +316,7 @@ function outed(event, d) {
     // d3.selectAll(".textexplanation").remove();
     // d3.selectAll(".rectexplanation").remove(); divExplanation
     d3.selectAll("rect").transition().duration(50).ease(d3.easeLinear).remove();
+    //d3.selectAll("line").transition().duration(50).ease(d3.easeLinear).remove();
     d3.selectAll(".meanText").transition().duration(50).ease(d3.easeLinear).remove();
 }
 function beautifyAsArrayOfArray(arrayOfTexts, maxElementsInColumn, maxCharPerRow)   {
