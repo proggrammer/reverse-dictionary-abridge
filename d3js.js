@@ -163,7 +163,7 @@ function overed(event, d) {
     var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
     var gLeft = d3.select("g").style("transform").split(",")[4];
     var margin = svgWidth*.1;
-    var textItem = d.text+": connected to ("+window.allOPWords[d.text]+")" + window.dictMap[d.text];
+    var textItem = d.text+"\u00A0[Input Connection ("+window.allOPWords[d.text]+")]\u00A0" + window.dictMap[d.text];
     textItem = textItem.replaceAll(", ", ",").replaceAll(",", ", ");
     var textItemAsList = textItem.split("<br>").flatMap(ti => beautiffyLine(capitaliseAndRemoveUnderScore(ti), svgWidth/6.67));
     var textWidth = Math.min(textItem.length*10,svgWidth);
@@ -185,6 +185,8 @@ function overed(event, d) {
             .attr("fill", "white")
             .attr("y", 7+d.y + 14+i*14)
             .attr("x", minSVG);
+        if(i==0)
+            b.style("font-size", "18px").attr("fill", "red");
         allBs.push(b);
         maxWidthEachText = Math.max(b.node().getBBox().width, maxWidthEachText);
     }
@@ -209,7 +211,7 @@ function overed(event, d) {
         .attr("height", 14+textItemAsList.length*14)
         .attr("x", finalX)
         .attr("y", d.y)
-        .attr("fill",  "red");
+        .attr("fill",  "darkblue");
 
     allBs.forEach(el => el.attr("x", finalX));
 }
