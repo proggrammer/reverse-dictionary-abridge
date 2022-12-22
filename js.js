@@ -22,6 +22,8 @@ angular.module('myApp', [])
         $http.get("corpus/dict.json")
             .then(function(response) {
                 $scope.dictFile = response.data;
+                $scope.dictFileMap = getDictMapForOPConsumption(response.data);
+                window.dictMapForOPConsumption = $scope.dictFileMap;
             });
         $http.get("corpus/hashes.json")
             .then(function(response) {
@@ -84,7 +86,8 @@ angular.module('myApp', [])
                 else
                     $scope.suggestion = stringiFySuggestion($scope.tries[lastTerm.trim()].map(s => s.replace(lastTerm, "")), lastTerm);
             }
-            drawOPItems($scope.dictFile, $scope.hashesFile);
+            //var dictMapForOPConsumption = getDictMapForOPConsumption($scope.dictFile);
+            drawOPItems($scope.dictFile, $scope.hashesFile, $scope.dictFileMap);
         }
         function setCaret( nodePos, offset) {
             var el = document.getElementById("inWow");
@@ -354,5 +357,12 @@ function editDist(str1, str2, m, n)
         min(editDist(str1, str2, m, n - 1), // Insert
             editDist(str1, str2, m - 1, n), // Remove
             editDist(str1, str2, m - 1, n - 1)); // Replace
+}
+function getDictMapForOPConsumption(dict)   {
+    var map = {};
+    dict.forEach(el => {
+        map[el.w] = "."+el.g+".<br>"+ el.m +"<br>" +el.u;
+    })
+    return map;
 }
 

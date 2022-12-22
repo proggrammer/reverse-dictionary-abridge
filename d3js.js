@@ -1,4 +1,5 @@
-function drawOPItems(dict, hashes)  {
+function drawOPItems(dict, hashes, dictMap)  {
+    window.dictMap = dictMap;
     var inputText = d3.select("[contenteditable]").text();
     var inputTextAsArray = inputText.split(/\s+/);
     if(window.bi == undefined)
@@ -60,15 +61,13 @@ function drawOPItems(dict, hashes)  {
 }
 function drwCld2(data)  {
     window.data = data;
-    console.log("fffff"+data.length);
-    console.log(data);
     var dataSize = data.length;
     if( dataSize === 0)
     {
         window.maxScore = 40;
         var arrayOfExample = ["mental science", "male cow", "cut hair occupation", "mosquito diseases", "fewer words retaining sense"];
-        var randomNumber = Math.round(arrayOfExample.length*Math.random());
-        data = [{"text": "Reverse Dictionary", size: 40},
+        var randomNumber = Math.round((arrayOfExample.length-1)*Math.random());
+        data = [{"text": "Reverse Dictionary", size: 40, color: "blue"},
             {"text": "Use fewer words without loosing sense!", size:16},
             {"text": "Learn new words using this tool!", size:12},
             {"text": "Find Connection between words!", size:12},
@@ -79,7 +78,8 @@ function drwCld2(data)  {
             {"text": "Be precise!", size:12},
             {"text": "Enrich your Vocabulary!", size:12},
             {"text": "Use next character suggestion for spelling correction!", size:15},
-            {"text": "Search dictionary words with their definitions!", size:35}
+            {"text": "Search dictionary words with their definitions!", size:35},
+            {"text": "About the Author!", size:20, color: "green", link:"https://proggrammer.github.io/homepage/"},
         ];
         arrayOfExample.forEach(s =>{
             if(s != arrayOfExample[randomNumber])   {
@@ -94,13 +94,11 @@ function drwCld2(data)  {
         .size([w, h*.9])
         .words(data)
         .padding(0)
-        //.rotate(function(d) { return (d.size >= 40 ? 0 : (Math.random()) * 90); })
         .rotate(function(d) { return 0; })
         .font("Impact")
         .fontSize(function(d) { return d.size; })
         .on("end", draw);
     layout.start();
-
     function draw(words) {
         var maxScore = Math.floor(window.maxScore);
             d3.select(".d3js-canvas").select("svg")
@@ -112,20 +110,148 @@ function drwCld2(data)  {
                 .data(words)
                 //.join()
                 .join("text")
+                .on("mouseover", overed)
+                .on("mouseout", outed)
+                .on("click", clickHandle)
                 .transition()
                 .duration(1500)
                 .ease(d3.easeLinear)
                 .style("font-size", function(d) { return d.size + "px"; })
-                .style("fill", function(d) { return d.size == maxScore ? "rgb(0,0,255)" :"rgb("+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+")"; })
-                //.style("fill", "rgb(0,0,255)")
+                .style("fill", function (d) {
+                    if(d.color != undefined)
+                        return d.color;
+                    else
+                        return d.size == maxScore ?
+                            "rgb(0,0,255)" :
+                            "rgb("+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+")";
+                })
                 .style("font-family", "Impact")
                 .attr("text-anchor", "middle")
                 .attr("transform", function(d) {
-                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"
                 })
                 .text(function(d) { return d.text; });
         window.huha = true;
     }
+}
+function clickHandle(evet, d)   {
+    if(d.text == "About the Author!")
+        window.location = d.link;
+}
+function capitaliseAndRemoveUnderScore(string)   {
+    string = string.replace("_"," ");
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
+function overed(event, d) {
+    const bbox = this.getBBox();
+    console.log(d.text);
+
+    if(d.text == "About the Author!") {
+        var aa = d3.select("g")
+            .append("rect")
+            .attr("width", bbox.width)
+            .attr("height", 3)
+            .attr("x", d.x - bbox.width / 2)
+            .attr("y", d.y)
+            .attr("fill", "red");
+        d3.select(this).text(d.link).style("font-size", "10px");
+    }
+    d3.select(this)
+            .transition().duration(300).ease(d3.easeLinear)
+            .style("fill", "red");
+    if(window.dictMap == undefined) return;
+    var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
+    var gLeft = d3.select("g").style("transform").split(",")[4];
+    var margin = svgWidth*.1;
+    var textItem = d.text+": connected to ("+window.allOPWords[d.text]+")" + window.dictMap[d.text];
+    textItem = textItem.replaceAll(", ", ",").replaceAll(",", ", ");
+    var textItemAsList = textItem.split("<br>").flatMap(ti => beautiffyLine(capitaliseAndRemoveUnderScore(ti), svgWidth/6.67));
+    var textWidth = Math.min(textItem.length*10,svgWidth);
+
+    var minSVG = margin-gLeft;//-
+    var maxSVG = minSVG+svgWidth;//+
+
+
+    var maxWidthEachText = 0;
+    var a = d3.select("g")
+            .append("rect");
+    var allBs = []
+    for(var i=0; i<textItemAsList.length; i++) {
+        var b = d3.select("g")
+            .append("text")
+            .attr("class", "meanText")
+            .attr("id", "meanText"+i)
+            .text(textItemAsList[i])
+            .attr("fill", "white")
+            .attr("y", 7+d.y + 14+i*14)
+            .attr("x", minSVG);
+        allBs.push(b);
+        maxWidthEachText = Math.max(b.node().getBBox().width, maxWidthEachText);
+    }
+    var leftSide = d.x - minSVG;
+    var rightSide = maxSVG - d.x;
+    var minSide = Math.min(leftSide, rightSide);
+    console.log(minSide, maxWidthEachText, leftSide, rightSide);//-
+    if(minSide>=maxWidthEachText/2) {
+        console.log("center ALLi");
+        finalX = d.x - (maxWidthEachText / 2);
+    }
+    else if(leftSide < rightSide) {
+        console.log("left ALLi");
+        finalX = minSVG;
+    }
+    else {
+        console.log("right ALLi");
+        finalX = maxSVG - maxWidthEachText;
+    }
+
+    a.attr("width", maxWidthEachText+7)
+        .attr("height", 14+textItemAsList.length*14)
+        .attr("x", finalX)
+        .attr("y", d.y)
+        .attr("fill",  "red");
+
+    allBs.forEach(el => el.attr("x", finalX));
+}
+function beautiffyLine(textItem, maxText){
+    var result = [];
+    var textArr = textItem.split(" ");
+    var index = 0;
+    result[index] = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+    textArr.forEach(t => {
+        var curLength = result[index].length + t.length;
+        if(curLength > maxText)  {
+            index++;
+            result[index] = "\u00A0"+t;
+        }
+        else {
+            result[index] = (result[index]+" "+t);
+        }
+
+    });
+    return result;
+}
+function outed(event, d) {
+    d3.select(this)
+        .transition().duration(300).ease(d3.easeLinear)
+        //.style("font-size", function(d) { return d.size + "px"; })
+        .style("fill", function (d) {
+            var maxScore = Math.floor(window.maxScore);
+            if(d.color != undefined)
+                return d.color;
+            else
+                return d.size == maxScore ?
+                    "rgb(0,0,255)" :
+                    "rgb("+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+","+(maxScore-d.size)*255/maxScore+")";
+        })
+    if(d.text == "About the Author!"){
+        d3.select(this).text("About the Author!")
+            .style("font-size", d.size);
+    }
+    // d3.selectAll(".textexplanation").remove();
+    // d3.selectAll(".rectexplanation").remove(); divExplanation
+    d3.selectAll("rect").transition().duration(50).ease(d3.easeLinear).remove();
+    d3.selectAll(".meanText").transition().duration(50).ease(d3.easeLinear).remove();
 }
 function beautifyAsArrayOfArray(arrayOfTexts, maxElementsInColumn, maxCharPerRow)   {
     var result =[];

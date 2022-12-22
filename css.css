@@ -5,6 +5,21 @@ body{
     background-position: center;
     background-repeat: no-repeat;
 }
+.meanmean{
+    background: cadetblue;
+}
+.divExplanation{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    border: 3px solid #73AD21;
+    background: brown;
+}
+.wordhovered{
+    background-color: yellow;
+    color: black;
+}
 .d3js-canvas{
     margin: 0;
     position: absolute;
