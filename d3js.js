@@ -11,6 +11,7 @@ function drawOPItems(dict, hashes, dictMap)  {
     window.wordsToBeAdded = [];
     window.wordsToBeRemoved = [];
 
+    //console.log(itemsToBeAdded);
     itemsToBeAdded.forEach( (e, i) => {
         if(e.trim() != "") {
             var stem = stemIt(e);
@@ -29,6 +30,7 @@ function drawOPItems(dict, hashes, dictMap)  {
             window.bi[e] = {"stem": stem, "presentIn": presentIn, "index": index};
         }
     });
+    //console.log(window.bi);
     itemsToBeRemoved.forEach( (e, i) => {
         var allKeys = Object.keys(window.allOPWords);
         allKeys.forEach(k => {
@@ -226,6 +228,7 @@ function overed(event, d) {
             d3.select("g")
                 .append('path')
                 .attr('d', curve(points))
+                .style("stroke-width", 3)
                 .attr('stroke', 'red')
                 .attr('fill', 'none');
         }
@@ -259,7 +262,7 @@ function overed(event, d) {
             .attr("id", "meanText"+i)
             .text(textItemAsList[i])
             .attr("fill", "white")
-            .attr("y", (d.y+14+textItemAsList.length*14+200>svgHeight) ? 7+d.y - (14+(textItemAsList.length-1-i)*14) : 7+d.y + 14+i*14)
+            .attr("y", (d.y+14+textItemAsList.length*14+200>svgHeight/2) ? 7+d.y - (14+(textItemAsList.length-1-i)*14) : 7+d.y + 14+i*14)
             .attr("x", minSVG);
         if(i==0)
             b.style("font-size", "18px").attr("fill", "red");
@@ -278,7 +281,7 @@ function overed(event, d) {
     else {
         finalX = maxSVG - maxWidthEachText;
     }
-    if(d.y+14+textItemAsList.length*14+200>svgHeight)    {
+    if(d.y+14+textItemAsList.length*14+200>svgHeight/2)    {
         a.attr("width", maxWidthEachText+7)
             .attr("height", 14+textItemAsList.length*14)
             .attr("x", finalX)
