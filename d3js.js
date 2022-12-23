@@ -11,7 +11,6 @@ function drawOPItems(dict, hashes, dictMap)  {
     window.wordsToBeAdded = [];
     window.wordsToBeRemoved = [];
 
-    //console.log(itemsToBeAdded);
     itemsToBeAdded.forEach( (e, i) => {
         if(e.trim() != "") {
             var stem = stemIt(e);
@@ -30,7 +29,6 @@ function drawOPItems(dict, hashes, dictMap)  {
             window.bi[e] = {"stem": stem, "presentIn": presentIn, "index": index};
         }
     });
-    //console.log(window.bi);
     itemsToBeRemoved.forEach( (e, i) => {
         var allKeys = Object.keys(window.allOPWords);
         allKeys.forEach(k => {
@@ -194,18 +192,16 @@ function overed(event, d) {
             arrSizesOfFontOfWords.splice(window.bi[w]["index"], 0, textItemNode.node().getBBox().width);
         textItemNode.remove();
         })
-    // console.log(arrSizesOfFontOfWords);
+    console.log(d3.select("svg").node().getBBox());
+    console.log(d.y);
+    console.log(d3.select("g").style("transform"));
     window.delimeters =[];
     var tillSizeNow = 0;
     var totalSize = (arrSizesOfFontOfWords.length-1)*spaceWidth+d3.sum(arrSizesOfFontOfWords);
-    // console.log(totalSize);
     arrSizesOfFontOfWords.forEach(v => {
             const valueNow = (tillSizeNow + v / 2) - totalSize/2;
-            // console.log("valueNow"+valueNow);
             window.delimeters.push(valueNow);
             tillSizeNow = tillSizeNow + (tillSizeNow == 0 ? 0 : 1) + v + 1;
-            // console.log("achcha:"+tillSizeNow);
-            // console.log(window.delimeters);
         });
 
     d3.select("g").append("text")
@@ -262,7 +258,7 @@ function overed(event, d) {
             .attr("id", "meanText"+i)
             .text(textItemAsList[i])
             .attr("fill", "white")
-            .attr("y", (d.y+14+textItemAsList.length*14+200>svgHeight/2) ? 7+d.y - (14+(textItemAsList.length-1-i)*14) : 7+d.y + 14+i*14)
+            .attr("y", (d.y>0) ? 7+(d.y-bbox.height-(10+textItemAsList.length*14)) + 14+i*14 : 7+d.y + 14+i*14)
             .attr("x", minSVG);
         if(i==0)
             b.style("font-size", "18px").attr("fill", "red");
@@ -281,13 +277,12 @@ function overed(event, d) {
     else {
         finalX = maxSVG - maxWidthEachText;
     }
-    if(d.y+14+textItemAsList.length*14+200>svgHeight/2)    {
+    if(d.y>0)    {
         a.attr("width", maxWidthEachText+7)
             .attr("height", 14+textItemAsList.length*14)
             .attr("x", finalX)
             .attr("y", d.y-bbox.height-(10+textItemAsList.length*14))
             .attr("fill",  "darkblue");
-        // console.log("iffff:lhs"+(d.y+14+textItemAsList.length*14+200)+"rhs(>)"+svgHeight);
     }
     else {
         a.attr("width", maxWidthEachText + 7)
@@ -295,7 +290,6 @@ function overed(event, d) {
             .attr("x", finalX)
             .attr("y", d.y)
             .attr("fill", "darkblue");
-        // console.log("else:lhs"+(d.y+14+textItemAsList.length*14+30)+"rhs(>)"+svgHeight);
     }
     allBs.forEach(el => el.attr("x", finalX));
 }
