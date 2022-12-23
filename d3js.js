@@ -230,23 +230,6 @@ function overed(event, d) {
         }
         drawIndexPoints++;
     });
-    // const line = d3.lineRadial()
-    //     .curve(d3.curveBundle.beta(0.85))
-    //     .radius(d => d.y)
-    //     .angle(d => d.x);
-    //
-    // d3.select("g")
-    //     .selectAll("path")
-    //     .data([[{x:0, y:20}, {x:50, y:30}]])
-    //     .join("path")
-    //     .style("fill", "red")
-    //     .attr("stroke", "red")
-    //     .style("mix-blend-mode", "multiply")
-    //     .attr("d", ([i, o]) => line(i.path(o)))
-    //     .each(function(d) { d.path = this; });
-
-
-    //link.style("mix-blend-mode", null);
     var maxWidthEachText = 0;
     var a = d3.select("g")
             .append("rect");
