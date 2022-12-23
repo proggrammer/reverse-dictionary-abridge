@@ -67,18 +67,18 @@ function drwCld2(data)  {
         window.maxScore = 40;
         var arrayOfExample = ["mental science", "male cow", "cut hair occupation", "mosquito diseases", "fewer words retaining sense"];
         var randomNumber = Math.round((arrayOfExample.length-1)*Math.random());
-        data = [{"text": "Reverse Dictionary", size: 40, color: "blue"},
-            {"text": "Use fewer words without loosing sense!", size:16},
-            {"text": "Learn new words using this tool!", size:12},
-            {"text": "Find Connection between words!", size:12},
-            {"text": "Type any word(s) in the textbox, example: '"+arrayOfExample[randomNumber]+"'!", size:30},
-            {"text": "Type any words in the textbox!", size:15},
-            {"text": "Abridge!", size:12},
-            {"text": "Shorten your ideas!", size:12},
-            {"text": "Be precise!", size:12},
-            {"text": "Enrich your Vocabulary!", size:12},
-            {"text": "Use next character suggestion for spelling correction!", size:15},
-            {"text": "Search dictionary words with their definitions!", size:35},
+        data = [{"text": "Reverse Dictionary", size: 40, color: "blue", link:"NA"},
+            {"text": "Use fewer words without loosing sense!", size:16, link:"NA"},
+            {"text": "Learn new words using this tool!", size:12, link:"NA"},
+            {"text": "Find Connection between words!", size:12, link:"NA"},
+            {"text": "Type any word(s) in the textbox, example: '"+arrayOfExample[randomNumber]+"'!", size:30, link:"NA"},
+            {"text": "Type any words in the textbox!", size:15, link:"NA"},
+            {"text": "Abridge!", size:12, link:"NA"},
+            {"text": "Shorten your ideas!", size:12, link:"NA"},
+            {"text": "Be precise!", size:12, link:"NA"},
+            {"text": "Enrich your Vocabulary!", size:12, link:"NA"},
+            {"text": "Use next character suggestion for spelling correction!", size:15, link:"NA"},
+            {"text": "Search dictionary words with their definitions!", size:35, link:"NA"},
             {"text": "About the Author!", size:20, color: "green", link:"https://proggrammer.github.io/homepage/"},
         ];
         arrayOfExample.forEach(s =>{
@@ -154,38 +154,30 @@ function overed(event, d) {
             .attr("x", d.x - bbox.width / 2)
             .attr("y", d.y)
             .attr("fill", "red");
+        //d3.select(this).style("cursor", "pointer");
         d3.select(this).text(d.link).style("font-size", "10px");
     }
     d3.select(this)
             .transition().duration(300).ease(d3.easeLinear)
             .style("fill", "red");
+    if(d.link != "NA")
+        d3.select(this).style("cursor", "pointer");
     if(window.dictMap == undefined) return;
     var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
     var svgHeight = d3.select("svg").style("height").replace("px", "");
     var gLeft = d3.select("g").style("transform").split(",")[4];
     var gTop = d3.select("g").style("transform").split(",")[5].replace(")","");
     var margin = svgWidth*.1;
-    var textItem = d.text+"\u00A0[Input Connection ("+window.allOPWords[d.text]+")]\u00A0" + window.dictMap[d.text];
+    var textItem = d.text+"\u00A0" + window.dictMap[d.text];
+    // var textItem = d.text+"\u00A0[Input Connection ("+window.allOPWords[d.text]+")]\u00A0" + window.dictMap[d.text];
     textItem = textItem.replaceAll(", ", ",").replaceAll(",", ", ");
     var textItemAsList = textItem.split("<br>").flatMap(ti => beautiffyLine(capitaliseAndRemoveUnderScore(ti), svgWidth/6.67));
     var textWidth = Math.min(textItem.length*10,svgWidth);
 
     var minSVG = margin-gLeft;//-
     var maxSVG = minSVG+svgWidth;//+
-
-    // //draw links
-    // var bbb = document.getElementById("inWow").getBoundingClientRect();
     var gBB = d3.select("svg");
-    //console.log(gBB);
     var yHighlightInput = 100;
-    // d3.select("g").append('line')
-    //     .style("stroke", "red")
-    //     .style("stroke-width", 8)
-    //     .attr("x1", 0)
-    //     .attr("y1", d3.select("svg").attr("height")-gTop-4)
-    //     .attr("x2", 10)
-    //     .attr("y2", d3.select("svg").attr("height")-gTop-4);
-    //var connections = window.allOPWords[d.text];
     var inputWords = Object.keys(window.bi);
     var arrSizesOfFontOfWords = [];
     var textItemNode = d3.select("g").append("text")
@@ -216,12 +208,29 @@ function overed(event, d) {
 
     d3.select("g").append("text")
         .attr("id", "testItem")
-    d3.select("g").append('circle')
-        .style("stroke", "red")
-        .style("stroke-width", 8)
-        .attr("r", 2)
-        .attr("cx", 0)
-        .attr("cy", d3.select("svg").attr("height")-gTop-3);
+    var avgBetweenPointsX = d3.sum(window.delimeters)/window.delimeters.length;
+    //var avgBetweenPointsY =
+    var toDrawPathPoints = window.allOPWords[d.text].map(word => window.bi[word].index);
+    var drawIndexPoints = 0;
+    window.delimeters.forEach(valueInside =>{
+        if(toDrawPathPoints.includes(drawIndexPoints)) {
+            d3.select("g").append('circle')
+                .style("stroke", "red")
+                .style("stroke-width", 8)
+                .attr("r", 2)
+                .attr("cx", 0 + valueInside)
+                .attr("cy", d3.select("svg").attr("height") - gTop - 3);
+            const curve = d3.line().curve(d3.curveNatural);
+
+            const points = [[d.x, d.y], [avgBetweenPointsX, (d3.select("svg").attr("height") - gTop - 3 + d.y) / 2], [0 + valueInside, d3.select("svg").attr("height") - gTop - 3]];
+            d3.select("g")
+                .append('path')
+                .attr('d', curve(points))
+                .attr('stroke', 'red')
+                .attr('fill', 'none');
+        }
+        drawIndexPoints++;
+    });
     // const line = d3.lineRadial()
     //     .curve(d3.curveBundle.beta(0.85))
     //     .radius(d => d.y)
@@ -316,7 +325,8 @@ function outed(event, d) {
     // d3.selectAll(".textexplanation").remove();
     // d3.selectAll(".rectexplanation").remove(); divExplanation
     d3.selectAll("rect").transition().duration(50).ease(d3.easeLinear).remove();
-    //d3.selectAll("line").transition().duration(50).ease(d3.easeLinear).remove();
+    d3.selectAll("path").transition().duration(50).ease(d3.easeLinear).remove();
+    d3.selectAll("circle").transition().duration(50).ease(d3.easeLinear).remove();
     d3.selectAll(".meanText").transition().duration(50).ease(d3.easeLinear).remove();
 }
 function beautifyAsArrayOfArray(arrayOfTexts, maxElementsInColumn, maxCharPerRow)   {
