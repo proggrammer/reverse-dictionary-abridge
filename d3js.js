@@ -192,18 +192,18 @@ function overed(event, d) {
             arrSizesOfFontOfWords.splice(window.bi[w]["index"], 0, textItemNode.node().getBBox().width);
         textItemNode.remove();
         })
-    console.log(arrSizesOfFontOfWords);
+    // console.log(arrSizesOfFontOfWords);
     window.delimeters =[];
     var tillSizeNow = 0;
     var totalSize = (arrSizesOfFontOfWords.length-1)*spaceWidth+d3.sum(arrSizesOfFontOfWords);
-    console.log(totalSize);
+    // console.log(totalSize);
     arrSizesOfFontOfWords.forEach(v => {
             const valueNow = (tillSizeNow + v / 2) - totalSize/2;
-            console.log("valueNow"+valueNow);
+            // console.log("valueNow"+valueNow);
             window.delimeters.push(valueNow);
             tillSizeNow = tillSizeNow + (tillSizeNow == 0 ? 0 : 1) + v + 1;
-            console.log("achcha:"+tillSizeNow);
-            console.log(window.delimeters);
+            // console.log("achcha:"+tillSizeNow);
+            // console.log(window.delimeters);
         });
 
     d3.select("g").append("text")
@@ -259,7 +259,7 @@ function overed(event, d) {
             .attr("id", "meanText"+i)
             .text(textItemAsList[i])
             .attr("fill", "white")
-            .attr("y", 7+d.y + 14+i*14)
+            .attr("y", (d.y+14+textItemAsList.length*14+200>svgHeight) ? 7+d.y - (14+(textItemAsList.length-1-i)*14) : 7+d.y + 14+i*14)
             .attr("x", minSVG);
         if(i==0)
             b.style("font-size", "18px").attr("fill", "red");
@@ -278,13 +278,22 @@ function overed(event, d) {
     else {
         finalX = maxSVG - maxWidthEachText;
     }
-
-    a.attr("width", maxWidthEachText+7)
-        .attr("height", 14+textItemAsList.length*14)
-        .attr("x", finalX)
-        .attr("y", d.y)
-        .attr("fill",  "darkblue");
-
+    if(d.y+14+textItemAsList.length*14+200>svgHeight)    {
+        a.attr("width", maxWidthEachText+7)
+            .attr("height", 14+textItemAsList.length*14)
+            .attr("x", finalX)
+            .attr("y", d.y-bbox.height-(10+textItemAsList.length*14))
+            .attr("fill",  "darkblue");
+        console.log("iffff:lhs"+(d.y+14+textItemAsList.length*14+200)+"rhs(>)"+svgHeight);
+    }
+    else {
+        a.attr("width", maxWidthEachText + 7)
+            .attr("height", 14 + textItemAsList.length * 14)
+            .attr("x", finalX)
+            .attr("y", d.y)
+            .attr("fill", "darkblue");
+        console.log("else:lhs"+(d.y+14+textItemAsList.length*14+30)+"rhs(>)"+svgHeight);
+    }
     allBs.forEach(el => el.attr("x", finalX));
 }
 function beautiffyLine(textItem, maxText){
