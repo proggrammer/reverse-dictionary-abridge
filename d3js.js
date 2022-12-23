@@ -284,7 +284,7 @@ function overed(event, d) {
             .attr("x", finalX)
             .attr("y", d.y-bbox.height-(10+textItemAsList.length*14))
             .attr("fill",  "darkblue");
-        console.log("iffff:lhs"+(d.y+14+textItemAsList.length*14+200)+"rhs(>)"+svgHeight);
+        // console.log("iffff:lhs"+(d.y+14+textItemAsList.length*14+200)+"rhs(>)"+svgHeight);
     }
     else {
         a.attr("width", maxWidthEachText + 7)
@@ -292,7 +292,7 @@ function overed(event, d) {
             .attr("x", finalX)
             .attr("y", d.y)
             .attr("fill", "darkblue");
-        console.log("else:lhs"+(d.y+14+textItemAsList.length*14+30)+"rhs(>)"+svgHeight);
+        // console.log("else:lhs"+(d.y+14+textItemAsList.length*14+30)+"rhs(>)"+svgHeight);
     }
     allBs.forEach(el => el.attr("x", finalX));
 }
