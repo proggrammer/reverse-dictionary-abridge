@@ -1,12 +1,12 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-
 <script src="d3.layout.cloud.js"></script>
-<script src="js.js"></script>
-<script src="d3js.js"></script>
+<script  type="module" src="index.js"></script>
+<script src="d3-related.js"></script>
+<script src="porter-stem.js"></script>
+<script src="util.js"></script>
+<script src="canvas-util.js"></script>
 <head>
     <title>Reverse Dictionary Abridge v1</title>
     <link rel="stylesheet" href="css.css">
@@ -16,19 +16,12 @@
     <svg id="cloud">
         <g></g>
     </svg>
-<!--    <svg id="svgcontainer" height="100%" width="100%">-->
-<!--&lt;!&ndash;        <svg id="paper"></svg>&ndash;&gt;-->
-<!--    </svg>-->
-<!--    <div  ng-model="seach" id="inWowPrev" class="inWowPrev">-->
-<!--    </div>-->
-    <div contenteditable ng-model="seach" id="inWow" class="inWow" ng-change="changeSearch()" contenteditable="true" ng-model-options="{ debounce: 1500 }" ng-focus="onFocus()" ng-blur="onFocusout()" ng-keyup="moveCursor()" ng-mouseup="moveCursor()">
+    <div contenteditable ng-model="seach" id="input-id" class="input-box" ng-change="changeSearch()" contenteditable="true" ng-model-options="{ debounce: 50 }" ng-focus="onFocus()" ng-blur="onFocusout()" ng-keyup="moveCursor()" ng-mouseup="moveCursor()">
         Search for words in Dictionary by their def<span style="color: red">initions..</span> example : 'cut hair occupation' or 'male cow'
     </div>
-    <div class="inWowSuggest">
-        <span style="color:blue">{{nextCharSuggestion}}</span>
+    <div class="input-suggestion">
     </div>
 
 </div>
 </body >
-
 </html>

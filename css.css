@@ -75,7 +75,7 @@ body{
     bottom: 0%;
     z-index: -100;
 }
-.inWowSuggest{
+.input-suggestion{
     position: absolute;
     top: 95%;
     align-content: center;
@@ -105,49 +105,3 @@ svg{
     height: 30px;
     text-align: center;
 }
-/*#infieldidtop{*/
-/*    width: 70%;*/
-/*    margin: 0;*/
-/*    position: absolute;*/
-/*    left: 15%;*/
-/*    top: 5%;*/
-/*    -ms-transform: translateY(-50%);*/
-/*    transform: translateY(-50%);*/
-/*    height: 30px;*/
-/*    text-align: center;*/
-/*}*/
-/*#headeridtop {*/
-/*    text-align: left;*/
-/*    background: transparent url(rd-trimmed.gif) no-repeat;*/
-/*    background-size: 63%;*/
-/*    overflow: hidden;*/
-/*    width: 21%;*/
-/*    margin: 0;*/
-/*    position: absolute;*/
-/*    left: 1%;*/
-/*    top: 5%;*/
-/*    -ms-transform: translateY(-50%);*/
-/*    transform: translateY(-50%);*/
-/*    height: 37px;*/
-/*}*/
-
-/*#canvas {*/
-/*    text-align: left;*/
-/*    background: darkgray;*/
-/*    position: absolute;*/
-/*    left: 0%;*/
-/*    top: 50%;*/
-/*    -ms-transform: translateY(-50%);*/
-/*    transform: translateY(-50%);*/
-/*}*/
-
-/*.footer{*/
-/*    width: 95%;*/
-/*    margin: 0;*/
-/*    position: absolute;*/
-/*    bottom: 0%;*/
-/*    -ms-transform: translateY(-50%);*/
-/*    transform: translateY(-50%);*/
-/*    height: 30px;*/
-/*    left: 44%;*/
-/*}*/
