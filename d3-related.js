@@ -58,7 +58,6 @@ function drawCloud(data, dictionary)    {
                 return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"
             })
             .text(function(d) { return d.text; });
-        window.huha = true;
     }
 }
 function getHomePageData(randomNumber)  {
@@ -145,13 +144,13 @@ function overed(event, d) {
         .style("fill", "red");
     if(d.link != "NA")
         d3.select(this).style("cursor", "pointer");
-    if(window.dictMap == undefined) return;
+    if(window.dictionary == undefined) return;
     var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
     var svgHeight = d3.select("svg").style("height").replace("px", "");
     var gLeft = d3.select("g").style("transform").split(",")[4];
     var gTop = d3.select("g").style("transform").split(",")[5].replace(")","");
     var margin = svgWidth*.1;
-    var textItem = d.text+"\u00A0" + window.dictMap[d.text];
+    var textItem = d.text+"\u00A0" + "["+window.dictionary[d.text].g+"]<br>"+window.dictionary[d.text].m+"<br>"+window.dictionary[d.text].u;
     // var textItem = d.text+"\u00A0[Input Connection ("+window.allOPWords[d.text]+")]\u00A0" + window.dictMap[d.text];
     textItem = textItem.replaceAll(", ", ",").replaceAll(",", ", ");
     var textItemAsList = textItem.split("<br>").flatMap(ti => beautiffyLine(capitaliseAndRemoveUnderScore(ti), svgWidth/6.67));
@@ -161,7 +160,7 @@ function overed(event, d) {
     var maxSVG = minSVG+svgWidth;//+
     var gBB = d3.select("svg");
     var yHighlightInput = 100;
-    var inputWords = Object.keys(window.bi);
+    var inputWords = Object.keys(window.canvasState.ipState);
     var arrSizesOfFontOfWords = [];
     var textItemNode = d3.select("g").append("text")
         .attr("id", "testItem")
@@ -172,7 +171,7 @@ function overed(event, d) {
         textItemNode = d3.select("g").append("text")
             .attr("id", "testItem")
             .text(w);
-        arrSizesOfFontOfWords.splice(window.bi[w]["index"], 0, textItemNode.node().getBBox().width);
+        arrSizesOfFontOfWords.splice(window.canvasState.ipState[w]["index"], 0, textItemNode.node().getBBox().width);
         textItemNode.remove();
     })
     window.delimeters =[];
@@ -188,7 +187,7 @@ function overed(event, d) {
         .attr("id", "testItem")
     var avgBetweenPointsX = d3.sum(window.delimeters)/window.delimeters.length;
     //var avgBetweenPointsY =
-    var toDrawPathPoints = window.allOPWords[d.text].map(word => window.bi[word].index);
+    var toDrawPathPoints = window.canvasState.opState[d.text].map(word => window.canvasState.ipState[word].index);
     var drawIndexPoints = 0;
     window.delimeters.forEach(valueInside =>{
         if(toDrawPathPoints.includes(drawIndexPoints)) {
