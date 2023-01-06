@@ -14,7 +14,7 @@ angular.module('myApp', [])
                         const hashes = responseH.data;
                         window.hashes = hashes;                         //3. winodw state
                         window.dictionary = dictionary;                 //4. winodw state
-                        drawCloud([], dictionary)
+                        drawCloud([], dictionary);
                     });
             });
         $scope.changeSearch = utilChangeSearch;

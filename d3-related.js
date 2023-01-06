@@ -1,7 +1,5 @@
 function drawCloud(data, dictionary)    {
     //text, size, link
-    console.log("draw called");
-    console.log(data);
     window.data = data;
     var dataSize = data.length;
     if( dataSize === 0)
@@ -14,7 +12,7 @@ function drawCloud(data, dictionary)    {
             if(s != arrayOfExample[randomNumber])   {
                 data.push({"text":"Type '"+s+"'!", "size":12});
             }
-        })
+        });
     }
     var maxScore = Math.floor(window.maxScore);
     var w = parseInt(d3.select(".d3js-canvas").style("width"), 10);
@@ -79,6 +77,43 @@ function getHomePageData(randomNumber)  {
         {"text": "About the Author!", size:20, color: "green", link:"https://proggrammer.github.io/homepage/"},
     ];
 }
+//it has ipState Map word -> (stem, index)
+// opState words Map word -> defContains[],
+function dataToDigest(presentCanvasState){
+    var minFontSize = 8;
+    var maxFontSize = 40;
+    var resultData = [];
+    var sumSizeOfHashes = 0;
+    var wordWiseScore = {};
+    for (var keyIp in presentCanvasState.ipState) {
+        var v = window.hashes[presentCanvasState.ipState[keyIp].stem] == undefined? 0: window.hashes[presentCanvasState.ipState[keyIp].stem].length;
+        wordWiseScore[keyIp] = v;
+        sumSizeOfHashes+=v;
+    }
+    var sumReverseScore =0;
+    var minScore = -1;
+    for (var keyIp in wordWiseScore) {
+        wordWiseScore[keyIp] = sumSizeOfHashes - wordWiseScore[keyIp];
+        if(minScore == -1)
+            minScore = wordWiseScore[keyIp];
+        minScore = Math.min(minScore, wordWiseScore[keyIp])
+        sumReverseScore+= wordWiseScore[keyIp];
+    }
+    for (var keyOp in presentCanvasState.opState) {
+        var sumSizeOfHashesForThisWord = 0;
+        presentCanvasState.opState[keyOp].forEach(w => {
+            sumSizeOfHashesForThisWord += wordWiseScore[w];
+        });
+        var score = normalise(minFontSize, maxFontSize, minScore, sumReverseScore, sumSizeOfHashesForThisWord);
+        const obj = {"text": keyOp, size: score}
+        resultData.push(obj);
+    }
+    return resultData;
+}
+function normalise(minFontSize, maxFontSize, minScore, maxScore, score){
+    if(minScore == maxScore) return (maxFontSize+maxFontSize)/2;
+    return ((maxScore - score)*minFontSize + (score - minScore)*maxFontSize)/(maxScore - minScore);
+}
 function getArrayOfExamples()   {
     return ["mental science", "male cow", "cut hair occupation", "mosquito diseases", "fewer words retaining sense"];
 }
@@ -140,9 +175,6 @@ function overed(event, d) {
         arrSizesOfFontOfWords.splice(window.bi[w]["index"], 0, textItemNode.node().getBBox().width);
         textItemNode.remove();
     })
-    console.log(d3.select("svg").node().getBBox());
-    console.log(d.y);
-    console.log(d3.select("g").style("transform"));
     window.delimeters =[];
     var tillSizeNow = 0;
     var totalSize = (arrSizesOfFontOfWords.length-1)*spaceWidth+d3.sum(arrSizesOfFontOfWords);

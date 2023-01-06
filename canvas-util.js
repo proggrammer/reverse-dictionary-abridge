@@ -5,7 +5,6 @@ function drawOPItemsAndGetNewCanvasState(dictionary, hashes, presentCanvasState,
     //presentCanvasState
     //it has ipState Map word -> (stem, index)
     // opState words Map word -> defContains[],
-    console.log("draw not called yet");
 
     if (presentCanvasState == undefined) presentCanvasState = {};
 
@@ -16,10 +15,14 @@ function drawOPItemsAndGetNewCanvasState(dictionary, hashes, presentCanvasState,
     var inputTextAsArray = inputText.split(/\s+/).filter(s => s.trim() !== "");
     const wordsToAdd = inputTextAsArray.filter(s => !wordsTillNow.includes(s));//words to add
     const wordsToRemove = wordsTillNow.filter(s => !inputTextAsArray.includes(s));//words to remove
+    console.log(wordsToRemove);
     presentCanvasState = updateCanvasStateAndReturnIt(wordsToAdd, wordsToRemove, presentCanvasState, hashes, inputTextAsArray);
-    //drawCloud(presentCanvasState, dictionary, hashes);
+    const data = dataToDigest(presentCanvasState);
+    drawCloud(data, dictionary);
+    window.data = data;
     return presentCanvasState
 }
+
 function updateCanvasStateAndReturnIt(wordsToAdd, wordsToRemove, presentCanvasState, hashes, inputTextAsArray)  {
     const result = getUpdatedIpOpState(wordsToAdd, wordsToRemove, presentCanvasState, inputTextAsArray, hashes);
     return result;
@@ -27,20 +30,33 @@ function updateCanvasStateAndReturnIt(wordsToAdd, wordsToRemove, presentCanvasSt
 function getUpdatedIpOpState(wordsToAdd, wordsToRemove, presentCanvasState, inputTextAsArray, hashes) {
     var ipState = presentCanvasState.ipState;
     var opState = presentCanvasState.opState;
-    wordsToRemove.forEach( (defWord, i) => {
+    wordsToRemove.forEach(defWord => {
         const stem = ipState[defWord].stem;
         const presentIn = hashes[stem];
         if (presentIn != undefined) {
             presentIn.forEach((dictWord) => {
                 if (opState[dictWord] != undefined) {
-                    opState[dictWord] = opState[dictWord].map(s => s != defWord);
+                    // opState[dictWord] = opState[dictWord].map(s => s != defWord);
+                    const index = opState[dictWord].indexOf(defWord);
+                    if (index > -1) { // only splice array when item is found
+                        opState[dictWord].splice(index, 1); // 2nd parameter means remove one item only
+                    }
                     if(opState[dictWord].length == 0)
                         delete opState[dictWord];
                 }
             });
         }
+        delete ipState[defWord];
     });
+    for(var k in opState)   {
+        if(opState[k].includes(true)) {
+            console.log("jhamela");
+            console.log(opState[k]);
+        }
+    }
 
+    console.log("inputTextAsArray");
+    console.log(inputTextAsArray);
     inputTextAsArray.forEach((defWord, i) => {
         if(wordsToAdd.includes(defWord)) {
             var stem = stemIt(defWord);
@@ -57,5 +73,6 @@ function getUpdatedIpOpState(wordsToAdd, wordsToRemove, presentCanvasState, inpu
             }
         }
     });
+
     return {"ipState": ipState, "opState": opState};
 }

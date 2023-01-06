@@ -1,19 +1,6 @@
 function utilChangeSearch() {
-
-    const inputText = d3.select("[contenteditable]").text();
-    if (inputBoxHasNoValue(inputText)) return;
-
-    const sel = window.getSelection();
-    const inputElement = document.getElementById("input-id");
-    const cursor = getCursorPosition(sel, inputElement);
-
-    utilUpdateInput(inputText);
-    if (cursor != undefined) {
-        setCursorPositionAtGiven(cursor[0], inputElement);
-        utilUpdateSuggestion(cursor[0], inputText);
-    }
-    const amyDebounce = debounce(drawingWork, 1000);
-    setTimeout(amyDebounce, 1000);
+    const amyDrawingWork = debounce(drawingWork, 1200);
+    setTimeout(amyDrawingWork, 1200);
 }
 
 function drawingWork() {
@@ -64,7 +51,7 @@ function setCaret(nodePos, offset) {
             offset = el.childNodes[nodePos].length
         range.setStart(el.childNodes[nodePos].childNodes[0], offset);
     }
-    range.collapse(true);
+    //range.collapse(true);
     sel.removeAllRanges();
     sel.addRange(range);
 }
@@ -127,6 +114,10 @@ function utilMoveCursor() {
     const inputElement = document.getElementById("input-id");
     const cursor = getCursorPosition(sel, inputElement);
     utilUpdateSuggestion((cursor == undefined ? 0 : cursor[0]), d3.select("[contenteditable]").text());
+    const inputText = d3.select("[contenteditable]").text();
+    utilUpdateInput(inputText);
+    if(cursor!=undefined && cursor[0]!=0)
+        setCursorPositionAtGiven(cursor[0], inputElement);
 }
 
 function utilFocus() {
