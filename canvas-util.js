@@ -15,7 +15,6 @@ function drawOPItemsAndGetNewCanvasState(dictionary, hashes, presentCanvasState,
     var inputTextAsArray = inputText.split(/\s+/).filter(s => s.trim() !== "");
     const wordsToAdd = inputTextAsArray.filter(s => !wordsTillNow.includes(s));//words to add
     const wordsToRemove = wordsTillNow.filter(s => !inputTextAsArray.includes(s));//words to remove
-    console.log(wordsToRemove);
     presentCanvasState = updateCanvasStateAndReturnIt(wordsToAdd, wordsToRemove, presentCanvasState, hashes, inputTextAsArray);
     const data = dataToDigest(presentCanvasState);
     drawCloud(data, dictionary);
@@ -48,15 +47,6 @@ function getUpdatedIpOpState(wordsToAdd, wordsToRemove, presentCanvasState, inpu
         }
         delete ipState[defWord];
     });
-    for(var k in opState)   {
-        if(opState[k].includes(true)) {
-            console.log("jhamela");
-            console.log(opState[k]);
-        }
-    }
-
-    console.log("inputTextAsArray");
-    console.log(inputTextAsArray);
     inputTextAsArray.forEach((defWord, i) => {
         if(wordsToAdd.includes(defWord)) {
             var stem = stemIt(defWord);

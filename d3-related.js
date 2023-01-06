@@ -148,6 +148,7 @@ function overed(event, d) {
     var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
     var svgHeight = d3.select("svg").style("height").replace("px", "");
     var gLeft = d3.select("g").style("transform").split(",")[4];
+    console.log(d3.select("g").style("transform"));
     var gTop = d3.select("g").style("transform").split(",")[5].replace(")","");
     var margin = svgWidth*.1;
     var textItem = d.text+"\u00A0" + "["+window.dictionary[d.text].g+"]<br>"+window.dictionary[d.text].m+"<br>"+window.dictionary[d.text].u;
