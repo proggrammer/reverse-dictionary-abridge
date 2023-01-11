@@ -63,7 +63,7 @@ function drawCloud(data, dictionary)    {
     }
 }
 function getHomePageData(randomNumber)  {
-    return [{"text": "Reverse Dictionary", size: 40, color: "blue", link:"NA"},
+    return [{"text": "Reverse Dictionary", size: 40, color: "blue", link:"https://youtu.be/eZ9kfVeDuig"},
         {"text": "Use fewer words without loosing sense!", size:16, link:"NA"},
         {"text": "Learn new words using this tool!", size:12, link:"NA"},
         {"text": "Find Connection between words!", size:12, link:"NA"},
@@ -119,7 +119,7 @@ function getArrayOfExamples()   {
     return ["mental science", "male cow", "cut hair occupation", "mosquito diseases", "fewer words retaining sense"];
 }
 function clickHandle(evet, d)   {
-    if(d.text == "About the Author!")
+    if(d.link != undefined && d.link != "NA")
         window.location = d.link;
 }
 function capitaliseAndRemoveUnderScore(string)   {
@@ -130,7 +130,7 @@ function overed(event, d) {
 
     const bbox = this.getBBox();
 
-    if(d.text == "About the Author!") {
+    if(d.link != undefined && d.link !="NA") {
         var aa = d3.select("g")
             .append("rect")
             .attr("width", bbox.width)
@@ -292,6 +292,10 @@ function outed(event, d) {
         })
     if(d.text == "About the Author!"){
         d3.select(this).text("About the Author!")
+            .style("font-size", d.size);
+    }
+    if(d.text == "Reverse Dictionary"){
+        d3.select(this).text("Reverse Dictionary")
             .style("font-size", d.size);
     }
     // d3.selectAll(".textexplanation").remove();
