@@ -4,6 +4,7 @@ function utilChangeSearch() {
 }
 
 function drawingWork() {
+
     const presentCanvasState = (window.canvasState == undefined) ? {} : window.canvasState;
     window.canvasState = updateCanvasAndGetCanvasState(d3.select("[contenteditable]").text(), presentCanvasState);
 }
@@ -20,7 +21,7 @@ function debounce(func, wait) {
 }
 
 function setCursorPositionAtGiven(caretPos, ele) {
-    if (ele == undefined) return;
+    if (ele == undefined || caretPos == undefined) return;
     var fullText = ele.textContent;
     var tillNowText = fullText.substring(0, caretPos);
     var totalString = "";
@@ -51,7 +52,7 @@ function setCaret(nodePos, offset) {
             offset = el.childNodes[nodePos].length
         range.setStart(el.childNodes[nodePos].childNodes[0], offset);
     }
-    //range.collapse(true);
+    range.collapse(true);
     sel.removeAllRanges();
     sel.addRange(range);
 }
@@ -100,6 +101,7 @@ function utilUpdateSuggestion(cursorPosition, inputText) {
         setHTML(".input-suggestion", "");
     else {
         var lastTerm = arrrr[arrrr.length - 1];
+        if(lastTerm == undefined) return;
         if (window.tries[lastTerm.trim()] == undefined)
             setHTML(".input-suggestion", "");
         else {
@@ -111,13 +113,13 @@ function utilUpdateSuggestion(cursorPosition, inputText) {
 
 function utilMoveCursor() {
     const sel = window.getSelection();
-    const inputElement = document.getElementById("input-id");
-    const cursor = getCursorPosition(sel, inputElement);
-    utilUpdateSuggestion((cursor == undefined ? 0 : cursor[0]), d3.select("[contenteditable]").text());
+    const elem = document.getElementById("input-id");
+    const cursor = getCursorPosition(sel, elem);
+    utilUpdateSuggestion((cursor == undefined ? 0 : cursor[1]), d3.select("[contenteditable]").text());
     const inputText = d3.select("[contenteditable]").text();
     utilUpdateInput(inputText);
-    if(cursor!=undefined && cursor[0]!=0)
-        setCursorPositionAtGiven(cursor[0], inputElement);
+    if(cursor!=undefined && cursor[1]!=0)
+        setCursorPositionAtGiven(cursor[1], elem);
 }
 
 function utilFocus() {
@@ -126,7 +128,7 @@ function utilFocus() {
         d3.select("[contenteditable]").html("");
 }
 
-function utilFocusOut() {
+function utilFocusout() {
     const searchInput = d3.select("[contenteditable]").html();
     if (searchInput == undefined || searchInput.trim() == "" || searchInput.replace("<br>", "").trim() == "")
         d3.select("[contenteditable]").html("Search for words in Dictionary by their def<span style=\"color: red\">initions..</span> example : 'hair cut occupation' or 'male cow'");
@@ -160,15 +162,15 @@ function node_walk(node, func) {
 };
 
 function getCursorPosition(sel, elem) {
-
     var cum_length = [0, 0];
 
     if (sel.anchorNode == elem)
-        cum_length = [sel.anchorOffset, sel.extentOffset];
+        cum_length = [sel.anchorOffset, sel.anchorOffset];
     else {
         var nodes_to_find = [sel.anchorNode, sel.extentNode];
-        if (!elem.contains(sel.anchorNode) || !elem.contains(sel.extentNode))
+        if (!elem.contains(sel.anchorNode) && !elem.contains(sel.extentNode)) {
             return undefined;
+        }
         else {
             var found = [0, 0];
             var i;
@@ -192,7 +194,8 @@ function getCursorPosition(sel, elem) {
             cum_length[1] += sel.extentOffset;
         }
     }
-    if (cum_length[0] <= cum_length[1])
+    if (cum_length[0] <= cum_length[1]) {
         return cum_length;
+    }
     return [cum_length[1], cum_length[0]];
 }

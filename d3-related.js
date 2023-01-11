@@ -28,6 +28,8 @@ function drawCloud(data, dictionary)    {
     layout.start();
     function draw(words) {
         var maxScore = Math.floor(window.maxScore);
+        window.l = layout.size()[0] / 2;
+        window.t = layout.size()[1] / 2;
         d3.select(".d3js-canvas").select("svg")
             .attr("width", layout.size()[0])
             .attr("height", layout.size()[1])
@@ -147,10 +149,11 @@ function overed(event, d) {
     if(window.dictionary == undefined) return;
     var svgWidth = d3.select("svg").style("width").replace("px", "")*.8;
     var svgHeight = d3.select("svg").style("height").replace("px", "");
-    var gLeft = d3.select("g").style("transform").split(",")[4];
-    console.log(d3.select("g").style("transform"));
-    var gTop = d3.select("g").style("transform").split(",")[5].replace(")","");
+    var gLeft = window.l//d3.select("g").style("transform").split(",")[4];
+
+    var gTop = window.t//d3.select("g").style("transform").split(",")[5].replace(")","");
     var margin = svgWidth*.1;
+    if(window.dictionary[d.text] == undefined) return;
     var textItem = d.text+"\u00A0" + "["+window.dictionary[d.text].g+"]<br>"+window.dictionary[d.text].m+"<br>"+window.dictionary[d.text].u;
     // var textItem = d.text+"\u00A0[Input Connection ("+window.allOPWords[d.text]+")]\u00A0" + window.dictMap[d.text];
     textItem = textItem.replaceAll(", ", ",").replaceAll(",", ", ");

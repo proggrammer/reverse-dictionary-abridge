@@ -5,7 +5,7 @@ function drawOPItemsAndGetNewCanvasState(dictionary, hashes, presentCanvasState,
     //presentCanvasState
     //it has ipState Map word -> (stem, index)
     // opState words Map word -> defContains[],
-
+    
     if (presentCanvasState == undefined) presentCanvasState = {};
 
     if (presentCanvasState.ipState == undefined) presentCanvasState.ipState = {};

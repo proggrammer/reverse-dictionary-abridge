@@ -20,7 +20,7 @@ angular.module('myApp', [])
         $scope.changeSearch = utilChangeSearch;
         $scope.moveCursor = utilMoveCursor;
         $scope.onFocus = utilFocus;
-        $scope.onFocusout = utilFocusOut;
+        $scope.onFocusout = utilFocusout;
     }).directive('contenteditable', function() {
     return {
         require: 'ngModel',
